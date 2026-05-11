@@ -13,7 +13,7 @@ class PostController extends Controller
 
     public function index(): View
     {
-        $posts = $this->postService->getPaginatedPosts();
+        $posts = $this->postService->getPaginatedPosts(auth()->id());
 
         return view('posts.index', compact('posts'));
     }

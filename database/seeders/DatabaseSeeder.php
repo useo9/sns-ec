@@ -15,6 +15,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // 管理者ユーザー
+        User::factory()->create([
+            'name'     => '管理者',
+            'email'    => 'admin@example.com',
+            'is_admin' => true,
+        ]);
+
         // ユーザー3人（パスワードはすべて "password"）
         $users = collect([
             User::factory()->create(['name' => '田中 花子', 'email' => 'hanako@example.com']),

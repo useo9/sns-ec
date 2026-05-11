@@ -13,7 +13,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password', 'is_admin'];
 
     protected $hidden = ['password', 'remember_token'];
 
@@ -21,7 +21,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'is_admin'          => 'boolean',
         ];
     }
 
@@ -43,5 +44,10 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
     }
 }

@@ -61,12 +61,44 @@
 
                     {{-- タグ --}}
                     @if ($post->tags->isNotEmpty())
-                        <div class="flex flex-wrap gap-1 px-4 pb-3">
+                        <div class="flex flex-wrap gap-1 px-4 pb-2">
                             @foreach ($post->tags as $tag)
                                 <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">#{{ $tag->name }}</span>
                             @endforeach
                         </div>
                     @endif
+
+                    {{-- いいね --}}
+                    <div class="px-4 pb-3 border-t pt-2"
+                         x-data="{
+                             liked: {{ $post->isLikedBy(auth()->user()) ? 'true' : 'false' }},
+                             count: {{ $post->likes_count }},
+                             async toggle() {
+                                 const method = this.liked ? 'DELETE' : 'POST';
+                                 const res = await fetch('/posts/{{ $post->id }}/like', {
+                                     method,
+                                     headers: {
+                                         'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content,
+                                         'Accept': 'application/json',
+                                     }
+                                 });
+                                 const data = await res.json();
+                                 this.liked = data.liked;
+                                 this.count = data.count;
+                             }
+                         }">
+                        <button @click="toggle"
+                                class="flex items-center gap-1.5 text-sm transition-colors"
+                                :class="liked ? 'text-rose-500' : 'text-gray-400 hover:text-rose-400'">
+                            <svg class="w-5 h-5 transition-transform active:scale-125"
+                                 :fill="liked ? 'currentColor' : 'none'"
+                                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                            <span x-text="count"></span>
+                        </button>
+                    </div>
                 </article>
             @empty
                 <div class="text-center text-gray-400 py-16">

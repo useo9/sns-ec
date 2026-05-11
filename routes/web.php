@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -21,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
 
+    // いいね
+    Route::post('/posts/{post}/like', [LikeController::class, 'store'])->name('likes.store');
+    Route::delete('/posts/{post}/like', [LikeController::class, 'destroy'])->name('likes.destroy');
+
     // 商品
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -38,6 +46,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// 管理者
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AdminLoginController::class, 'login']);
+
+    Route::middleware('admin')->group(function () {
+        Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
+        Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    });
 });
 
 require __DIR__.'/auth.php';
