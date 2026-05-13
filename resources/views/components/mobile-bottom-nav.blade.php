@@ -48,8 +48,8 @@
         </a>
 
         {{-- マイページ --}}
-        @php $profileActive = request()->routeIs('profile.*'); @endphp
-        <a href="{{ route('profile.edit') }}"
+        @php $profileActive = request()->routeIs('mypage'); @endphp
+        <a href="{{ route('mypage') }}"
            class="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 transition-colors
                   {{ $profileActive ? 'text-white' : 'text-gray-500' }}">
             <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold

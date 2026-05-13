@@ -17,8 +17,8 @@ class PostService
             'user',
             'product',
             'tags',
-            // 現在のユーザーのいいねのみ取得（N+1防止）
             'likes' => fn($q) => $q->where('user_id', $authUserId),
+            'comments.user',
         ])
         ->withCount('likes')
         ->latest()

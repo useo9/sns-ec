@@ -34,6 +34,11 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->latest();
+    }
+
     public function isLikedBy(User $user): bool
     {
         // eager load 済みの場合はクエリを発行しない

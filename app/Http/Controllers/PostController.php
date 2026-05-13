@@ -6,6 +6,7 @@ use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -17,6 +18,20 @@ class PostController extends Controller
         $posts = $this->postService->getPaginatedPosts(auth()->id());
 
         return view('posts.index', compact('posts'));
+    }
+
+    public function show(Post $post): View
+    {
+        $post->load([
+            'user',
+            'product',
+            'tags',
+            'likes' => fn($q) => $q->where('user_id', auth()->id()),
+            'comments' => fn($q) => $q->with('user')->oldest(),
+        ]);
+        $post->loadCount('likes');
+
+        return view('posts.show', compact('post'));
     }
 
     public function create(): View

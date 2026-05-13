@@ -1,16 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight">商品一覧</h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-white leading-tight">商品一覧</h2>
+            <a href="{{ route('products.create') }}"
+               class="bg-[#0095f6] hover:bg-[#1aa3ff] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                出品する
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            @if (session('success'))
+                <div class="mb-4 p-4 bg-green-900/30 border border-green-700 text-green-400 rounded-lg text-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 @forelse ($products as $product)
+                    @php $thumb = $product->productImages->first()?->image_path ?? $product->image_path; @endphp
                     <a href="{{ route('products.show', $product) }}"
                        class="bg-[#111111] rounded-lg overflow-hidden border border-gray-800 hover:border-gray-600 transition-colors">
-                        @if ($product->image_path)
-                            <img src="{{ asset('storage/' . $product->image_path) }}"
+                        @if ($thumb)
+                            <img src="{{ asset('storage/' . $thumb) }}"
                                  alt="{{ $product->title }}"
                                  class="w-full h-48 object-cover">
                         @else
@@ -25,6 +39,9 @@
                             @endif
                             <p class="text-base font-bold text-white mt-1">¥{{ number_format($product->price) }}</p>
                             <p class="text-xs text-gray-500 mt-0.5">{{ $product->conditionLabel() }}</p>
+                            @if ($product->productImages->count() > 1)
+                                <p class="text-xs text-gray-600 mt-0.5">写真 {{ $product->productImages->count() }}枚</p>
+                            @endif
                         </div>
                     </a>
                 @empty

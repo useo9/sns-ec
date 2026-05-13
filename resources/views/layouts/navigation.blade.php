@@ -23,6 +23,9 @@
                     <x-nav-link :href="route('carts.index')" :active="request()->routeIs('carts.*')">
                         カート
                     </x-nav-link>
+                    <x-nav-link :href="route('mypage')" :active="request()->routeIs('mypage')">
+                        マイページ
+                    </x-nav-link>
                 </div>
                 @endauth
             </div>
