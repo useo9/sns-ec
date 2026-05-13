@@ -1,34 +1,58 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-white leading-tight">タイムライン</h2>
-            <a href="{{ route('posts.create') }}"
-               class="bg-[#0095f6] hover:bg-[#1aa3ff] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                投稿する
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-white leading-tight">ユーザープロフィール</h2>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
-            @if (session('success'))
-                <div class="p-4 bg-green-900/30 border border-green-700 text-green-400 rounded-lg text-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
+            {{-- プロフィールカード --}}
+            <div class="bg-[#111111] border border-gray-800 rounded-lg p-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold text-xl shrink-0">
+                        {{ mb_substr($user->name, 0, 1) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-white font-bold text-lg">{{ $user->name }}</p>
+                        <div class="flex gap-4 mt-1 text-sm text-gray-400">
+                            <span><span class="text-white font-semibold">{{ $followersCount }}</span> フォロワー</span>
+                            <span><span class="text-white font-semibold">{{ $followingCount }}</span> フォロー中</span>
+                        </div>
+                    </div>
 
+                    {{-- フォローボタン (自分自身には表示しない) --}}
+                    @if (auth()->id() !== $user->id)
+                        @if ($isFollowing)
+                            <form method="POST" action="{{ route('users.unfollow', $user) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="px-5 py-2 rounded-lg text-sm font-medium bg-gray-700 text-white hover:bg-gray-600 transition-colors border border-gray-600">
+                                    フォロー中
+                                </button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('users.follow', $user) }}">
+                                @csrf
+                                <button type="submit"
+                                        class="px-5 py-2 rounded-lg text-sm font-medium bg-[#0095f6] text-white hover:bg-[#1aa3ff] transition-colors">
+                                    フォロー
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                </div>
+            </div>
+
+            {{-- 投稿一覧 --}}
             @forelse ($posts as $post)
                 <article class="bg-[#111111] shadow-sm rounded-lg overflow-hidden border border-gray-800">
-                    {{-- ユーザー情報 --}}
                     <div class="flex items-center gap-3 px-4 pt-4">
-                        <a href="{{ route('users.show', $post->user) }}"
-                           class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold text-sm shrink-0 hover:opacity-80 transition-opacity">
-                            {{ mb_substr($post->user->name, 0, 1) }}
-                        </a>
+                        <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold text-sm shrink-0">
+                            {{ mb_substr($user->name, 0, 1) }}
+                        </div>
                         <div class="flex-1">
-                            <a href="{{ route('users.show', $post->user) }}"
-                               class="font-semibold text-sm text-white hover:underline">{{ $post->user->name }}</a>
+                            <p class="font-semibold text-sm text-white">{{ $user->name }}</p>
                             <p class="text-xs text-gray-500">{{ $post->created_at->diffForHumans() }}</p>
                         </div>
                         @if ($post->user_id === auth()->id())
@@ -48,17 +72,14 @@
                         @endif
                     </div>
 
-                    {{-- 本文 --}}
                     <p class="px-4 pt-3 pb-2 text-gray-200 text-sm whitespace-pre-wrap">{{ $post->body }}</p>
 
-                    {{-- 投稿画像 --}}
                     @if ($post->image_path)
                         <img src="{{ asset('storage/' . $post->image_path) }}"
                              alt="投稿画像"
                              class="w-full object-cover max-h-80">
                     @endif
 
-                    {{-- リンク商品カード --}}
                     @if ($post->product)
                         <a href="{{ route('products.show', $post->product) }}"
                            class="mx-4 mb-3 border border-gray-700 rounded-lg flex items-center gap-3 p-3 bg-black hover:bg-gray-900 transition-colors block">
@@ -76,7 +97,6 @@
                         </a>
                     @endif
 
-                    {{-- タグ --}}
                     @if ($post->tags->isNotEmpty())
                         <div class="flex flex-wrap gap-1 px-4 pb-2">
                             @foreach ($post->tags as $tag)
@@ -85,7 +105,6 @@
                         </div>
                     @endif
 
-                    {{-- いいね --}}
                     <div class="px-4 pb-3 border-t border-gray-800 pt-2"
                          x-data="{
                              liked: {{ $post->isLikedBy(auth()->user()) ? 'true' : 'false' }},
@@ -123,7 +142,6 @@
                 </div>
             @endforelse
 
-            {{-- ページネーション --}}
             @if ($posts->hasPages())
                 <div class="mt-4">
                     {{ $posts->links() }}
