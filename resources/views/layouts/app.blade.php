@@ -13,24 +13,32 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Safe area for iPhone home indicator -->
+        <style>
+            .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+        </style>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+    <body class="font-sans antialiased bg-black text-white">
+        <div class="min-h-screen bg-black">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-[#111111] shadow border-b border-gray-800">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 sm:py-6">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="pb-20 sm:pb-0">
                 {{ $slot }}
             </main>
         </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <x-mobile-bottom-nav />
     </body>
 </html>

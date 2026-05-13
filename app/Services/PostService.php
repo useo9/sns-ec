@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class PostService
 {
@@ -45,5 +46,14 @@ class PostService
         }
 
         return $post;
+    }
+
+    public function deletePost(Post $post): void
+    {
+        if ($post->image_path) {
+            Storage::disk('public')->delete($post->image_path);
+        }
+
+        $post->delete();
     }
 }
