@@ -7,6 +7,15 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## テスト用アカウント
+
+| 役割 | email | password |
+|------|-------|----------|
+| 一般ユーザー | test@example.com | password |
+| 管理者 | admin@example.com | password |
+
+> `php artisan migrate:fresh --seed` を実行するとテストデータが投入されます。
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

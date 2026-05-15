@@ -22,6 +22,12 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
+        // テストユーザー（講師確認用）
+        User::factory()->create([
+            'name'  => 'テストユーザー',
+            'email' => 'test@example.com',
+        ]);
+
         // ユーザー3人（パスワードはすべて "password"）
         $users = collect([
             User::factory()->create(['name' => '田中 花子', 'email' => 'hanako@example.com']),
