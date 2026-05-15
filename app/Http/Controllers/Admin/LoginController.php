@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -25,10 +27,22 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
+        $key = 'admin-login:' . Str::lower($request->input('email')) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 6)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->withErrors([
+                'email' => "ログイン試行が多すぎます。{$seconds}秒後に再試行してください。",
+            ])->onlyInput('email');
+        }
+
         if (auth()->attempt($credentials) && auth()->user()->is_admin) {
+            RateLimiter::clear($key);
             $request->session()->regenerate();
             return redirect()->route('admin.orders.index');
         }
+
+        RateLimiter::hit($key, 60);
 
         // 管理者でない場合は即ログアウト
         auth()->logout();
