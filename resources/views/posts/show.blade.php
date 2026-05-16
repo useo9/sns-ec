@@ -46,19 +46,29 @@
                         <p class="text-xs text-gray-500">{{ $post->created_at->diffForHumans() }}</p>
                     </div>
                     @if ($post->user_id === auth()->id())
-                        <form method="POST" action="{{ route('posts.destroy', $post) }}"
-                              onsubmit="return confirm('この投稿を削除しますか？')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                                    title="削除">
+                        <div class="flex items-center gap-1">
+                            <a href="{{ route('posts.edit', $post) }}"
+                               class="p-1.5 text-gray-500 hover:text-[#0095f6] hover:bg-[#0095f6]/10 rounded-lg transition-colors"
+                               title="編集">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
-                            </button>
-                        </form>
+                            </a>
+                            <form method="POST" action="{{ route('posts.destroy', $post) }}"
+                                  onsubmit="return confirm('この投稿を削除しますか？')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                                        title="削除">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
 
@@ -123,9 +133,14 @@
             </div>
 
             {{-- コメントセクション --}}
+            @php
+                $commentsData = $post->comments->map(function ($c) {
+                    return ['id' => $c->id, 'body' => $c->body, 'user_id' => $c->user_id, 'user_name' => $c->user->name, 'created_at' => $c->created_at->diffForHumans()];
+                });
+            @endphp
             <div class="bg-[#111111] border border-gray-800 rounded-lg overflow-hidden"
                  x-data="{
-                     comments: @json($post->comments->map(fn($c) => ['id' => $c->id, 'body' => $c->body, 'user_id' => $c->user_id, 'user_name' => $c->user->name, 'created_at' => $c->created_at->diffForHumans()])),
+                     comments: @json($commentsData),
                      newComment: '',
                      authId: {{ auth()->id() }},
                      submitting: false,

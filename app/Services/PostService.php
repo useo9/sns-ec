@@ -48,6 +48,27 @@ class PostService
         return $post;
     }
 
+    public function updatePost(Post $post, array $data, ?UploadedFile $image): void
+    {
+        if ($image) {
+            if ($post->image_path && ! str_starts_with($post->image_path, 'http')) {
+                Storage::disk('public')->delete($post->image_path);
+            }
+            $post->image_path = $image->store('posts', 'public');
+        }
+
+        $post->product_id = $data['product_id'] ?? null;
+        $post->body       = $data['body'];
+        $post->save();
+
+        $tagIds = collect(explode(',', $data['tags'] ?? ''))
+            ->map(fn($name) => trim($name))
+            ->filter()
+            ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id);
+
+        $post->tags()->sync($tagIds);
+    }
+
     public function deletePost(Post $post): void
     {
         if ($post->image_path) {

@@ -56,6 +56,32 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', '投稿しました。');
     }
 
+    public function edit(Post $post): View
+    {
+        abort_if($post->user_id !== auth()->id(), 403);
+
+        $products = auth()->user()
+            ->products()
+            ->where('status', 1)
+            ->orderByDesc('created_at')
+            ->get(['id', 'title', 'image_path']);
+
+        return view('posts.edit', compact('post', 'products'));
+    }
+
+    public function update(PostRequest $request, Post $post): RedirectResponse
+    {
+        abort_if($post->user_id !== auth()->id(), 403);
+
+        $this->postService->updatePost(
+            $post,
+            $request->validated(),
+            $request->file('image'),
+        );
+
+        return redirect()->route('posts.show', $post)->with('success', '投稿を更新しました。');
+    }
+
     public function destroy(Post $post): RedirectResponse
     {
         abort_if($post->user_id !== auth()->id(), 403);
