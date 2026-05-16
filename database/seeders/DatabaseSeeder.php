@@ -13,30 +13,15 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    // カテゴリ別 Unsplash 画像URL
-    private const IMAGES = [
-        'アウター' => 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990',
-        'トップス' => [
-            'https://images.unsplash.com/photo-1556821840-3a63f15732ce', // パーカー
-            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab', // Tシャツ
-        ],
-        'ボトムス' => 'https://images.unsplash.com/photo-1594938298603-c8148c4b4b6a',
-        'その他'   => [
-            'https://images.unsplash.com/photo-1542291026-7eec264c27ff', // スニーカー
-            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa', // バッグ
-        ],
-    ];
+    private const IMG_JACKET  = 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990'; // ジャケット・コート・アウター
+    private const IMG_HOODIE  = 'https://images.unsplash.com/photo-1556821840-3a63f15732ce'; // パーカー・スウェット・フリース
+    private const IMG_TEE     = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab'; // Tシャツ・シャツ・ポロ・ニット
+    private const IMG_DENIM   = 'https://images.unsplash.com/photo-1594938298603-c8148c4b4b6a'; // デニム・パンツ・ボトムス
+    private const IMG_SHOES   = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff'; // スニーカー・ブーツ・シューズ
+    private const IMG_SCARF   = 'https://images.unsplash.com/photo-1612336307429-8a898d10e223'; // スカーフ・小物・アクセサリー
+    private const IMG_OUTFIT  = 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b'; // コーデ・投稿用
 
-    private const POST_IMAGES = [
-        'https://images.unsplash.com/photo-1612336307429-8a898d10e223', // ヴィンテージ
-        'https://images.unsplash.com/photo-1523381210434-271e8be1f52b', // 古着全体
-    ];
-
-    private function imageByCategory(string $category): string
-    {
-        $img = self::IMAGES[$category] ?? self::POST_IMAGES[0];
-        return is_array($img) ? $img[array_rand($img)] : $img;
-    }
+    private const POST_IMAGES = [self::IMG_OUTFIT, self::IMG_SCARF];
 
     private function postImage(): string
     {
@@ -85,7 +70,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'M',
                 'category'    => 'アウター',
                 'condition'   => 3,
-                'image_path'  => $this->imageByCategory('アウター'),
+                'image_path'  => self::IMG_JACKET,
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(1)->id,
@@ -96,7 +81,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'L',
                 'category'    => 'ボトムス',
                 'condition'   => 4,
-                'image_path'  => $this->imageByCategory('ボトムス'),
+                'image_path'  => self::IMG_DENIM,
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(2)->id,
@@ -107,7 +92,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'XL',
                 'category'    => 'トップス',
                 'condition'   => 2,
-                'image_path'  => $this->imageByCategory('トップス'),
+                'image_path'  => self::IMG_HOODIE,
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(0)->id,
@@ -118,7 +103,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'L',
                 'category'    => 'トップス',
                 'condition'   => 3,
-                'image_path'  => $this->imageByCategory('トップス'),
+                'image_path'  => self::IMG_TEE,
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(1)->id,
@@ -129,7 +114,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'M',
                 'category'    => 'ボトムス',
                 'condition'   => 3,
-                'image_path'  => $this->imageByCategory('ボトムス'),
+                'image_path'  => self::IMG_DENIM,
             ]),
         ]);
 
@@ -144,31 +129,31 @@ class DatabaseSeeder extends Seeder
                 'user_id'    => $users->get(0)->id,
                 'product_id' => $products->get(0)->id,
                 'body'       => '90sのリーバイスデニムジャケットを出品しました！程よいアタリが最高です。ぜひチェックしてみてください🧥',
-                'image_path' => $this->postImage(),
+                'image_path' => self::IMG_OUTFIT,
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(2)->id,
                 'product_id' => $products->get(2)->id,
                 'body'       => '80sのチャンピオン リバースウィーブ、状態良好です。この年代のスウェットは生地の厚みが全然違います。',
-                'image_path' => $this->postImage(),
+                'image_path' => self::IMG_OUTFIT,
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(2)->id,
                 'product_id' => null,
                 'body'       => '今日は下北沢で古着巡り。掘り出し物を見つけたときの興奮がたまらない。',
-                'image_path' => $this->postImage(),
+                'image_path' => self::IMG_SCARF,
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(0)->id,
                 'product_id' => $products->get(4)->id,
                 'body'       => 'ディッキーズのペインターパンツ出品中です。ゆるっとした感じが今の気分にぴったり。',
-                'image_path' => $this->postImage(),
+                'image_path' => self::IMG_OUTFIT,
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(1)->id,
                 'product_id' => null,
                 'body'       => 'アメカジコーデ。カーハートのジャケットにリーバイスの501。やっぱりこの組み合わせは最強。',
-                'image_path' => $this->postImage(),
+                'image_path' => self::IMG_OUTFIT,
             ]),
         ]);
 
@@ -187,9 +172,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '山田 凛', 'email' => 'rin.yamada@example.com'],
                 'products' => [
-                    ['title' => 'LEVI\'S 517 フレアデニム 70s USA製', 'description' => '70年代のアメリカ製フレアデニム。ヴィンテージらしいフェードが全体に入っています。', 'price' => 14800, 'brand' => "LEVI'S", 'size' => '28', 'category' => 'ボトムス', 'condition' => 3],
-                    ['title' => 'Wrangler 11MWZ ストレートデニム', 'description' => 'ラングラーの定番モデル。ウエスタンスタッチのディテールが渋い。', 'price' => 6500, 'brand' => 'Wrangler', 'size' => '30', 'category' => 'ボトムス', 'condition' => 4],
-                    ['title' => 'Lee 101-B デニムジャケット ワンウォッシュ', 'description' => 'リーのアーカイブモデル。ワンウォッシュ加工でやや落ち着いたインディゴに。', 'price' => 9200, 'brand' => 'Lee', 'size' => 'M', 'category' => 'アウター', 'condition' => 2],
+                    ['title' => 'LEVI\'S 517 フレアデニム 70s USA製', 'description' => '70年代のアメリカ製フレアデニム。ヴィンテージらしいフェードが全体に入っています。', 'price' => 14800, 'brand' => "LEVI'S", 'size' => '28', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
+                    ['title' => 'Wrangler 11MWZ ストレートデニム', 'description' => 'ラングラーの定番モデル。ウエスタンスタッチのディテールが渋い。', 'price' => 6500, 'brand' => 'Wrangler', 'size' => '30', 'category' => 'ボトムス', 'condition' => 4, 'image' => self::IMG_DENIM],
+                    ['title' => 'Lee 101-B デニムジャケット ワンウォッシュ', 'description' => 'リーのアーカイブモデル。ワンウォッシュ加工でやや落ち着いたインディゴに。', 'price' => 9200, 'brand' => 'Lee', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
                     ['body' => '70sのLEVI\'S 517、ようやく出品しました。フレアシルエットが今の気分に合いすぎる。', 'link_product' => 0],
@@ -200,9 +185,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '김지수 (Kim Jisoo)', 'email' => 'jisoo.kim@example.com'],
                 'products' => [
-                    ['title' => 'Carhartt WIP OG Active Jacket ブラック M', 'description' => '카하트 WIP의 정통 액티브 재킷. 상태 양호합니다.', 'price' => 11000, 'brand' => 'Carhartt WIP', 'size' => 'M', 'category' => 'アウター', 'condition' => 2],
-                    ['title' => 'Stüssy 8 Ball Tee ホワイト L', 'description' => '스투시 에이트볼 티셔츠. 프린트 선명, 거의 미착용 상태.', 'price' => 4800, 'brand' => 'Stüssy', 'size' => 'L', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Nike ACG 90s ナイロンジャケット グレー', 'description' => '90년대 나이키 ACG 나일론 재킷. 빈티지 감성 넘침.', 'price' => 8900, 'brand' => 'Nike', 'size' => 'L', 'category' => 'アウター', 'condition' => 3],
+                    ['title' => 'Carhartt WIP OG Active Jacket ブラック M', 'description' => '카하트 WIP의 정통 액티브 재킷. 상태 양호합니다.', 'price' => 11000, 'brand' => 'Carhartt WIP', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_JACKET],
+                    ['title' => 'Stüssy 8 Ball Tee ホワイト L', 'description' => '스투시 에이트볼 티셔츠. 프린트 선명, 거의 미착용 상태.', 'price' => 4800, 'brand' => 'Stüssy', 'size' => 'L', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
+                    ['title' => 'Nike ACG 90s ナイロンジャケット グレー', 'description' => '90년대 나이키 ACG 나일론 재킷. 빈티지 감성 넘침.', 'price' => 8900, 'brand' => 'Nike', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
                     ['body' => '오늘 카하트 재킷 업로드했어요~ 스트릿 룩에 잘 어울리는 아이템입니다.', 'link_product' => 0],
@@ -213,9 +198,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '陈浩然 (Chen Haoran)', 'email' => 'haoran.chen@example.com'],
                 'products' => [
-                    ['title' => 'Supreme Box Logo Tee 黒 M 2019', 'description' => '2019年シーズンのボックスロゴ。未着用保管品、タグ付き。', 'price' => 32000, 'brand' => 'Supreme', 'size' => 'M', 'category' => 'トップス', 'condition' => 1],
-                    ['title' => 'The North Face Nuptse 1996 ダウン ネイビー L', 'description' => '96年製ヌプシ。フィルパワー健在、ダウン抜け少なめです。', 'price' => 28000, 'brand' => 'The North Face', 'size' => 'L', 'category' => 'アウター', 'condition' => 3],
-                    ['title' => 'BAPE Shark Full Zip Hoodie カモ XL', 'description' => 'BAPEのシャークフーディ。カモ柄、ファスナー動作良好。', 'price' => 22000, 'brand' => 'A BATHING APE', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3],
+                    ['title' => 'Supreme Box Logo Tee 黒 M 2019', 'description' => '2019年シーズンのボックスロゴ。未着用保管品、タグ付き。', 'price' => 32000, 'brand' => 'Supreme', 'size' => 'M', 'category' => 'トップス', 'condition' => 1, 'image' => self::IMG_TEE],
+                    ['title' => 'The North Face Nuptse 1996 ダウン ネイビー L', 'description' => '96年製ヌプシ。フィルパワー健在、ダウン抜け少なめです。', 'price' => 28000, 'brand' => 'The North Face', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
+                    ['title' => 'BAPE Shark Full Zip Hoodie カモ XL', 'description' => 'BAPEのシャークフーディ。カモ柄、ファスナー動作良好。', 'price' => 22000, 'brand' => 'A BATHING APE', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_HOODIE],
                 ],
                 'posts' => [
                     ['body' => '上海的古着市场越来越有意思了！今天入手的Supreme真品，开心。', 'link_product' => 0],
@@ -226,9 +211,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => 'Jake Morrison', 'email' => 'jake.morrison@example.com'],
                 'products' => [
-                    ['title' => 'Pendleton Woolen Shirt XL USA Made', 'description' => 'Classic Pendleton wool shirt in great condition. Made in USA, thick and warm.', 'price' => 7200, 'brand' => 'Pendleton', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3],
-                    ['title' => 'Filson Mackinaw Cruiser Jacket 42', 'description' => 'Heavy-duty Filson cruiser in original plaid. Some wear but super durable still.', 'price' => 19800, 'brand' => 'Filson', 'size' => 'XL', 'category' => 'アウター', 'condition' => 4],
-                    ['title' => 'Red Wing 875 Moc Toe ブーツ 9D', 'description' => 'Work-worn Red Wings with great patina. Resoled once, plenty of life left.', 'price' => 13500, 'brand' => 'Red Wing', 'size' => '27cm', 'category' => 'その他', 'condition' => 4],
+                    ['title' => 'Pendleton Woolen Shirt XL USA Made', 'description' => 'Classic Pendleton wool shirt in great condition. Made in USA, thick and warm.', 'price' => 7200, 'brand' => 'Pendleton', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_TEE],
+                    ['title' => 'Filson Mackinaw Cruiser Jacket 42', 'description' => 'Heavy-duty Filson cruiser in original plaid. Some wear but super durable still.', 'price' => 19800, 'brand' => 'Filson', 'size' => 'XL', 'category' => 'アウター', 'condition' => 4, 'image' => self::IMG_JACKET],
+                    ['title' => 'Red Wing 875 Moc Toe ブーツ 9D', 'description' => 'Work-worn Red Wings with great patina. Resoled once, plenty of life left.', 'price' => 13500, 'brand' => 'Red Wing', 'size' => '27cm', 'category' => 'その他', 'condition' => 4, 'image' => self::IMG_SHOES],
                 ],
                 'posts' => [
                     ['body' => 'Just listed my Pendleton wool shirt — perfect for layering season. American workwear never goes out of style.', 'link_product' => 0],
@@ -239,9 +224,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '박민준 (Park Minjun)', 'email' => 'minjun.park@example.com'],
                 'products' => [
-                    ['title' => 'Polo Ralph Lauren ニットセーター クルーネック M', 'description' => '폴로 랄프로렌 니트. 보풀 없이 깨끗한 상태입니다.', 'price' => 5500, 'brand' => 'Ralph Lauren', 'size' => 'M', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Tommy Hilfiger フラッグロゴ コーチジャケット L', 'description' => '90s 타미힐피거 코치 재킷. 로고 자수 선명, 세탁 완료.', 'price' => 7800, 'brand' => 'Tommy Hilfiger', 'size' => 'L', 'category' => 'アウター', 'condition' => 3],
-                    ['title' => 'Nautica セーリングジャケット ネイビー XL', 'description' => '90s 노티카 세일링 재킷. 바람막이 기능 살아있고 상태 굿.', 'price' => 9600, 'brand' => 'Nautica', 'size' => 'XL', 'category' => 'アウター', 'condition' => 3],
+                    ['title' => 'Polo Ralph Lauren ニットセーター クルーネック M', 'description' => '폴로 랄프로렌 니트. 보풀 없이 깨끗한 상태입니다.', 'price' => 5500, 'brand' => 'Ralph Lauren', 'size' => 'M', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
+                    ['title' => 'Tommy Hilfiger フラッグロゴ コーチジャケット L', 'description' => '90s 타미힐피거 코치 재킷. 로고 자수 선명, 세탁 완료.', 'price' => 7800, 'brand' => 'Tommy Hilfiger', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
+                    ['title' => 'Nautica セーリングジャケット ネイビー XL', 'description' => '90s 노티카 세일링 재킷. 바람막이 기능 살아있고 상태 굿.', 'price' => 9600, 'brand' => 'Nautica', 'size' => 'XL', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
                     ['body' => '90s 아메카지 감성 너무 좋아... 타미힐피거랑 노티카 조합은 진리.', 'link_product' => 1],
@@ -252,9 +237,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '渡辺 颯太', 'email' => 'sota.watanabe@example.com'],
                 'products' => [
-                    ['title' => 'COMME des GARÇONS SHIRT ストライプシャツ S', 'description' => 'コムデギャルソンシャツのアーカイブ。ストライプ柄、状態良好です。', 'price' => 18000, 'brand' => 'COMME des GARÇONS', 'size' => 'S', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Yohji Yamamoto ウールスラックス ブラック M', 'description' => 'ヨウジヤマモトのスラックス。上質なウール素材、シルエットが美しい。', 'price' => 24000, 'brand' => 'Yohji Yamamoto', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2],
-                    ['title' => 'Issey Miyake PLEATS PLEASE プリーツパンツ グレー', 'description' => 'イッセイミヤケのプリーツプリーズ。シワになりにくく扱いやすいです。', 'price' => 15000, 'brand' => 'Issey Miyake', 'size' => '3', 'category' => 'ボトムス', 'condition' => 2],
+                    ['title' => 'COMME des GARÇONS SHIRT ストライプシャツ S', 'description' => 'コムデギャルソンシャツのアーカイブ。ストライプ柄、状態良好です。', 'price' => 18000, 'brand' => 'COMME des GARÇONS', 'size' => 'S', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
+                    ['title' => 'Yohji Yamamoto ウールスラックス ブラック M', 'description' => 'ヨウジヤマモトのスラックス。上質なウール素材、シルエットが美しい。', 'price' => 24000, 'brand' => 'Yohji Yamamoto', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
+                    ['title' => 'Issey Miyake PLEATS PLEASE プリーツパンツ グレー', 'description' => 'イッセイミヤケのプリーツプリーズ。シワになりにくく扱いやすいです。', 'price' => 15000, 'brand' => 'Issey Miyake', 'size' => '3', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
                 ],
                 'posts' => [
                     ['body' => '日本のデザイナーズブランドを少しずつ集めています。ヨウジのスラックスはマストハブ。', 'link_product' => 1],
@@ -265,9 +250,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => 'Sofia Marchetti', 'email' => 'sofia.marchetti@example.com'],
                 'products' => [
-                    ['title' => 'Levi\'s 501 高腰デニム ショーツ W26', 'description' => 'Pantaloncini di jeans Levi\'s 501 vintage tagliati a mano. Perfetti per l\'estate.', 'price' => 4200, 'brand' => "Levi's", 'size' => 'W26', 'category' => 'ボトムス', 'condition' => 3],
-                    ['title' => 'Versace ヴィンテージ シルクスカーフ', 'description' => 'Foulard di seta Versace vintage. Stampa barocca, colori vivaci e intatti.', 'price' => 12000, 'brand' => 'Versace', 'size' => 'FREE', 'category' => 'その他', 'condition' => 2],
-                    ['title' => 'Moschino 90s ロゴプリント Tシャツ', 'description' => 'T-shirt Moschino anni \'90 con logo. Pezzi così non se ne trovano più.', 'price' => 8800, 'brand' => 'Moschino', 'size' => 'S', 'category' => 'トップス', 'condition' => 3],
+                    ['title' => 'Levi\'s 501 高腰デニム ショーツ W26', 'description' => 'Pantaloncini di jeans Levi\'s 501 vintage tagliati a mano. Perfetti per l\'estate.', 'price' => 4200, 'brand' => "Levi's", 'size' => 'W26', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
+                    ['title' => 'Versace ヴィンテージ シルクスカーフ', 'description' => 'Foulard di seta Versace vintage. Stampa barocca, colori vivaci e intatti.', 'price' => 12000, 'brand' => 'Versace', 'size' => 'FREE', 'category' => 'その他', 'condition' => 2, 'image' => self::IMG_SCARF],
+                    ['title' => 'Moschino 90s ロゴプリント Tシャツ', 'description' => 'T-shirt Moschino anni \'90 con logo. Pezzi così non se ne trovano più.', 'price' => 8800, 'brand' => 'Moschino', 'size' => 'S', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_TEE],
                 ],
                 'posts' => [
                     ['body' => 'Ho trovato questi Levi\'s 501 tagliati a un mercatino. Pronti per l\'estate! 🌞', 'link_product' => 0],
@@ -278,9 +263,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => '中村 葵', 'email' => 'aoi.nakamura@example.com'],
                 'products' => [
-                    ['title' => 'Patagonia レトロX フリースジャケット M ブラック', 'description' => 'パタゴニアのレトロXフリース。ボア状の内側がふかふかで暖かい。', 'price' => 16000, 'brand' => 'Patagonia', 'size' => 'M', 'category' => 'アウター', 'condition' => 2],
-                    ['title' => 'L.L.Bean ハンティング モックネック フリース', 'description' => 'エルエルビーンのアウトドアフリース。肉厚でアウターとしても使えます。', 'price' => 5800, 'brand' => 'L.L.Bean', 'size' => 'L', 'category' => 'アウター', 'condition' => 3],
-                    ['title' => 'Columbia ウィンドブレーカー ネイビー×レッド S', 'description' => 'コロンビアの90sウィンドブレーカー。色の組み合わせが最高にかわいい。', 'price' => 4900, 'brand' => 'Columbia', 'size' => 'S', 'category' => 'アウター', 'condition' => 3],
+                    ['title' => 'Patagonia レトロX フリースジャケット M ブラック', 'description' => 'パタゴニアのレトロXフリース。ボア状の内側がふかふかで暖かい。', 'price' => 16000, 'brand' => 'Patagonia', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_HOODIE],
+                    ['title' => 'L.L.Bean ハンティング モックネック フリース', 'description' => 'エルエルビーンのアウトドアフリース。肉厚でアウターとしても使えます。', 'price' => 5800, 'brand' => 'L.L.Bean', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_HOODIE],
+                    ['title' => 'Columbia ウィンドブレーカー ネイビー×レッド S', 'description' => 'コロンビアの90sウィンドブレーカー。色の組み合わせが最高にかわいい。', 'price' => 4900, 'brand' => 'Columbia', 'size' => 'S', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
                     ['body' => 'アウトドア系古着が最近マイブーム。パタゴニアのレトロXはやっぱり名作。', 'link_product' => 0],
@@ -291,9 +276,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => 'Léa Dubois', 'email' => 'lea.dubois@example.com'],
                 'products' => [
-                    ['title' => 'A.P.C. セーラーボーダー カットソー S', 'description' => 'T-shirt marinière A.P.C. en coton, rayures bleues et blanches. État impeccable.', 'price' => 7500, 'brand' => 'A.P.C.', 'size' => 'S', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Isabel Marant エトワール リネンシャツ ホワイト 36', 'description' => 'Chemise en lin Isabel Marant Étoile. Légère et respirante, parfaite pour l\'été.', 'price' => 13000, 'brand' => 'Isabel Marant', 'size' => '36', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Sandro パリ テーパードトラウザー クリーム M', 'description' => 'Pantalon Sandro Paris en tissu crème. Coupe élégante, jambes fuselées.', 'price' => 10800, 'brand' => 'Sandro', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2],
+                    ['title' => 'A.P.C. セーラーボーダー カットソー S', 'description' => 'T-shirt marinière A.P.C. en coton, rayures bleues et blanches. État impeccable.', 'price' => 7500, 'brand' => 'A.P.C.', 'size' => 'S', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
+                    ['title' => 'Isabel Marant エトワール リネンシャツ ホワイト 36', 'description' => 'Chemise en lin Isabel Marant Étoile. Légère et respirante, parfaite pour l\'été.', 'price' => 13000, 'brand' => 'Isabel Marant', 'size' => '36', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
+                    ['title' => 'Sandro パリ テーパードトラウザー クリーム M', 'description' => 'Pantalon Sandro Paris en tissu crème. Coupe élégante, jambes fuselées.', 'price' => 10800, 'brand' => 'Sandro', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
                 ],
                 'posts' => [
                     ['body' => 'Le style vintage parisien c\'est avant tout : une marinière, un jean et des escarpins. Simple et efficace. 🥐', 'link_product' => 0],
@@ -304,9 +289,9 @@ class DatabaseSeeder extends Seeder
             [
                 'user'     => ['name' => 'Marco Oliveira', 'email' => 'marco.oliveira@example.com'],
                 'products' => [
-                    ['title' => 'Dickies 874 ワークパンツ カーキ 32×30', 'description' => 'Calça de trabalho Dickies 874 em ótimo estado. Cor cáqui clássica.', 'price' => 5200, 'brand' => 'Dickies', 'size' => 'W32', 'category' => 'ボトムス', 'condition' => 3],
-                    ['title' => 'Champion リバースウィーブ クルーネック スウェット グレー L', 'description' => 'Moletom Champion reverse weave, cinza, em excelente estado. Muito confortável.', 'price' => 8400, 'brand' => 'Champion', 'size' => 'L', 'category' => 'トップス', 'condition' => 2],
-                    ['title' => 'Vans Old Skool ブラック×ホワイト 27.5cm', 'description' => 'Tênis Vans Old Skool preto e branco, usado poucas vezes. Solado em bom estado.', 'price' => 6800, 'brand' => 'Vans', 'size' => '27.5cm', 'category' => 'その他', 'condition' => 3],
+                    ['title' => 'Dickies 874 ワークパンツ カーキ 32×30', 'description' => 'Calça de trabalho Dickies 874 em ótimo estado. Cor cáqui clássica.', 'price' => 5200, 'brand' => 'Dickies', 'size' => 'W32', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
+                    ['title' => 'Champion リバースウィーブ クルーネック スウェット グレー L', 'description' => 'Moletom Champion reverse weave, cinza, em excelente estado. Muito confortável.', 'price' => 8400, 'brand' => 'Champion', 'size' => 'L', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_HOODIE],
+                    ['title' => 'Vans Old Skool ブラック×ホワイト 27.5cm', 'description' => 'Tênis Vans Old Skool preto e branco, usado poucas vezes. Solado em bom estado.', 'price' => 6800, 'brand' => 'Vans', 'size' => '27.5cm', 'category' => 'その他', 'condition' => 3, 'image' => self::IMG_SHOES],
                 ],
                 'posts' => [
                     ['body' => 'O streetwear clássico nunca sai de moda. Dickies + Champion é minha fórmula favorita. 🛹', 'link_product' => 0],
@@ -331,10 +316,12 @@ class DatabaseSeeder extends Seeder
 
             $userProducts = collect();
             foreach ($data['products'] as $productData) {
+                $image = $productData['image'];
+                unset($productData['image']);
                 $product = Product::factory()->create(array_merge($productData, [
                     'user_id'    => $user->id,
                     'status'     => 1,
-                    'image_path' => $this->imageByCategory($productData['category']),
+                    'image_path' => $image,
                 ]));
                 $product->tags()->attach($allTags->shuffle()->take(rand(1, 3))->pluck('id'));
                 $userProducts->push($product);
