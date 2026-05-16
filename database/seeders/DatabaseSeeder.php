@@ -13,6 +13,36 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    // カテゴリ別 Unsplash 画像URL
+    private const IMAGES = [
+        'アウター' => 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990',
+        'トップス' => [
+            'https://images.unsplash.com/photo-1556821840-3a63f15732ce', // パーカー
+            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab', // Tシャツ
+        ],
+        'ボトムス' => 'https://images.unsplash.com/photo-1594938298603-c8148c4b4b6a',
+        'その他'   => [
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff', // スニーカー
+            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa', // バッグ
+        ],
+    ];
+
+    private const POST_IMAGES = [
+        'https://images.unsplash.com/photo-1612336307429-8a898d10e223', // ヴィンテージ
+        'https://images.unsplash.com/photo-1523381210434-271e8be1f52b', // 古着全体
+    ];
+
+    private function imageByCategory(string $category): string
+    {
+        $img = self::IMAGES[$category] ?? self::POST_IMAGES[0];
+        return is_array($img) ? $img[array_rand($img)] : $img;
+    }
+
+    private function postImage(): string
+    {
+        return self::POST_IMAGES[array_rand(self::POST_IMAGES)];
+    }
+
     public function run(): void
     {
         // 管理者ユーザー
@@ -55,6 +85,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'M',
                 'category'    => 'アウター',
                 'condition'   => 3,
+                'image_path'  => $this->imageByCategory('アウター'),
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(1)->id,
@@ -65,6 +96,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'L',
                 'category'    => 'ボトムス',
                 'condition'   => 4,
+                'image_path'  => $this->imageByCategory('ボトムス'),
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(2)->id,
@@ -75,6 +107,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'XL',
                 'category'    => 'トップス',
                 'condition'   => 2,
+                'image_path'  => $this->imageByCategory('トップス'),
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(0)->id,
@@ -85,6 +118,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'L',
                 'category'    => 'トップス',
                 'condition'   => 3,
+                'image_path'  => $this->imageByCategory('トップス'),
             ]),
             Product::factory()->create([
                 'user_id'     => $users->get(1)->id,
@@ -95,6 +129,7 @@ class DatabaseSeeder extends Seeder
                 'size'        => 'M',
                 'category'    => 'ボトムス',
                 'condition'   => 3,
+                'image_path'  => $this->imageByCategory('ボトムス'),
             ]),
         ]);
 
@@ -109,26 +144,31 @@ class DatabaseSeeder extends Seeder
                 'user_id'    => $users->get(0)->id,
                 'product_id' => $products->get(0)->id,
                 'body'       => '90sのリーバイスデニムジャケットを出品しました！程よいアタリが最高です。ぜひチェックしてみてください🧥',
+                'image_path' => $this->postImage(),
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(2)->id,
                 'product_id' => $products->get(2)->id,
                 'body'       => '80sのチャンピオン リバースウィーブ、状態良好です。この年代のスウェットは生地の厚みが全然違います。',
+                'image_path' => $this->postImage(),
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(2)->id,
                 'product_id' => null,
                 'body'       => '今日は下北沢で古着巡り。掘り出し物を見つけたときの興奮がたまらない。',
+                'image_path' => $this->postImage(),
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(0)->id,
                 'product_id' => $products->get(4)->id,
                 'body'       => 'ディッキーズのペインターパンツ出品中です。ゆるっとした感じが今の気分にぴったり。',
+                'image_path' => $this->postImage(),
             ]),
             Post::factory()->create([
                 'user_id'    => $users->get(1)->id,
                 'product_id' => null,
                 'body'       => 'アメカジコーデ。カーハートのジャケットにリーバイスの501。やっぱりこの組み合わせは最強。',
+                'image_path' => $this->postImage(),
             ]),
         ]);
 
@@ -292,8 +332,9 @@ class DatabaseSeeder extends Seeder
             $userProducts = collect();
             foreach ($data['products'] as $productData) {
                 $product = Product::factory()->create(array_merge($productData, [
-                    'user_id' => $user->id,
-                    'status'  => 1,
+                    'user_id'    => $user->id,
+                    'status'     => 1,
+                    'image_path' => $this->imageByCategory($productData['category']),
                 ]));
                 $product->tags()->attach($allTags->shuffle()->take(rand(1, 3))->pluck('id'));
                 $userProducts->push($product);
@@ -308,6 +349,7 @@ class DatabaseSeeder extends Seeder
                     'user_id'    => $user->id,
                     'product_id' => $linkedProduct?->id,
                     'body'       => $postData['body'],
+                    'image_path' => $this->postImage(),
                 ]);
                 $post->tags()->attach($allTags->shuffle()->take(rand(1, 2))->pluck('id'));
             }
