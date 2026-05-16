@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-16">
         <div class="max-w-lg mx-auto sm:px-6 lg:px-8">
             <div class="bg-[#111111] border border-gray-800 shadow-sm rounded-lg p-8 text-center">
@@ -19,7 +19,7 @@
                         @foreach ($order->items as $item)
                             <li class="flex items-center gap-3 p-3">
                                 @if ($item->product->image_path)
-                                    <img src="{{ asset('storage/' . $item->product->image_path) }}"
+                                    <img src="{{ image_url($item->product->image_path) }}"
                                          alt="{{ $item->product->title }}"
                                          class="w-12 h-12 object-cover rounded shrink-0">
                                 @else

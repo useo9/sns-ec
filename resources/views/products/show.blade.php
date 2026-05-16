@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
@@ -25,7 +25,7 @@
                             {{-- メイン画像 --}}
                             <div class="relative w-full aspect-square bg-gray-900">
                                 <template x-for="(path, i) in images" :key="i">
-                                    <img :src="'/storage/' + path"
+                                    <img :src="path.startsWith('http') ? path : '/storage/' + path"
                                          x-show="current === i"
                                          x-transition:enter="transition ease-out duration-200"
                                          x-transition:enter-start="opacity-0"
@@ -70,14 +70,14 @@
                                         <button @click="current = i"
                                                 class="shrink-0 w-14 h-14 rounded overflow-hidden border-2 transition-colors"
                                                 :class="current === i ? 'border-[#0095f6]' : 'border-transparent'">
-                                            <img :src="'/storage/' + path" class="w-full h-full object-cover">
+                                            <img :src="path.startsWith('http') ? path : '/storage/' + path" class="w-full h-full object-cover">
                                         </button>
                                     </template>
                                 </div>
                             @endif
 
                         @elseif ($product->image_path)
-                            <img src="{{ asset('storage/' . $product->image_path) }}"
+                            <img src="{{ image_url($product->image_path) }}"
                                  alt="{{ $product->title }}"
                                  class="w-full aspect-square object-cover">
                         @else

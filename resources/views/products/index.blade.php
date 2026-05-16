@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-white leading-tight">商品一覧</h2>
@@ -24,7 +24,7 @@
                     <a href="{{ route('products.show', $product) }}"
                        class="bg-[#111111] rounded-lg overflow-hidden border border-gray-800 hover:border-gray-600 transition-colors">
                         @if ($thumb)
-                            <img src="{{ asset('storage/' . $thumb) }}"
+                            <img src="{{ image_url($thumb) }}"
                                  alt="{{ $product->title }}"
                                  class="w-full h-48 object-cover">
                         @else

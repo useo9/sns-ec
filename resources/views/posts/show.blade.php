@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <a href="{{ url()->previous() }}"
@@ -67,7 +67,7 @@
 
                 {{-- 投稿画像 --}}
                 @if ($post->image_path)
-                    <img src="{{ asset('storage/' . $post->image_path) }}"
+                    <img src="{{ image_url($post->image_path) }}"
                          alt="投稿画像"
                          class="w-full object-cover">
                 @endif
@@ -77,7 +77,7 @@
                     <a href="{{ route('products.show', $post->product) }}"
                        class="mx-4 my-3 border border-gray-700 rounded-lg flex items-center gap-3 p-3 bg-black hover:bg-gray-900 transition-colors block">
                         @if ($post->product->image_path)
-                            <img src="{{ asset('storage/' . $post->product->image_path) }}"
+                            <img src="{{ image_url($post->product->image_path) }}"
                                  alt="{{ $post->product->title }}"
                                  class="w-16 h-16 object-cover rounded">
                         @else

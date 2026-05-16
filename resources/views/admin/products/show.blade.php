@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 @section('title', '商品詳細')
 
 @section('content')
@@ -14,10 +14,10 @@
     {{-- 画像 --}}
     <div class="lg:col-span-1 space-y-4">
         @if ($product->image_path)
-            <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->title }}"
+            <img src="{{ image_url($product->image_path) }}" alt="{{ $product->title }}"
                  class="w-full rounded-xl object-cover aspect-square border border-gray-800">
         @elseif ($product->productImages->isNotEmpty())
-            <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" alt="{{ $product->title }}"
+            <img src="{{ image_url($product->productImages->first()->image_path) }}" alt="{{ $product->title }}"
                  class="w-full rounded-xl object-cover aspect-square border border-gray-800">
         @else
             <div class="w-full aspect-square rounded-xl bg-gray-800 flex items-center justify-center text-gray-600">No Image</div>

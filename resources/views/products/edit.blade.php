@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <a href="{{ route('products.show', $product) }}"
@@ -29,7 +29,7 @@
                         <div class="grid grid-cols-4 gap-2 mb-4">
                             @foreach ($product->productImages as $image)
                                 <div class="relative aspect-square">
-                                    <img src="{{ asset('storage/' . $image->image_path) }}"
+                                    <img src="{{ image_url($image->image_path) }}"
                                          class="w-full h-full object-cover rounded-lg">
                                     <label class="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center cursor-pointer has-[:checked]:bg-red-500 transition-colors"
                                            title="削除">

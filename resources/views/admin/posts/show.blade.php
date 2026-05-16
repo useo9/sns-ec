@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 @section('title', '投稿詳細')
 
 @section('content')
@@ -34,7 +34,7 @@
             <p class="text-gray-200 text-sm whitespace-pre-wrap mb-4">{{ $post->body }}</p>
 
             @if ($post->image_path)
-                <img src="{{ asset('storage/' . $post->image_path) }}" alt="投稿画像"
+                <img src="{{ image_url($post->image_path) }}" alt="投稿画像"
                      class="w-full rounded-lg object-cover max-h-80 mb-4">
             @endif
 
@@ -42,7 +42,7 @@
                 <div class="border border-gray-700 rounded-lg p-3 flex items-center gap-3 bg-black mb-4">
                     <div class="w-12 h-12 bg-gray-800 rounded flex items-center justify-center text-gray-500 text-xs shrink-0">
                         @if ($post->product->image_path)
-                            <img src="{{ asset('storage/' . $post->product->image_path) }}" class="w-12 h-12 object-cover rounded">
+                            <img src="{{ image_url($post->product->image_path) }}" class="w-12 h-12 object-cover rounded">
                         @else
                             商品
                         @endif

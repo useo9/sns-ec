@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">カート</h2>
     </x-slot>
@@ -27,7 +27,7 @@
                         @foreach ($carts as $cart)
                             <li class="flex items-center gap-4 p-4">
                                 @if ($cart->product->image_path)
-                                    <img src="{{ asset('storage/' . $cart->product->image_path) }}"
+                                    <img src="{{ image_url($cart->product->image_path) }}"
                                          alt="{{ $cart->product->title }}"
                                          class="w-20 h-20 object-cover rounded shrink-0">
                                 @else
