@@ -25,6 +25,7 @@ class PostController extends Controller
         $post->load([
             'user',
             'product',
+            'postImages',
             'tags',
             'likes' => fn($q) => $q->where('user_id', auth()->id()),
             'comments' => fn($q) => $q->with('user')->oldest(),
@@ -50,7 +51,7 @@ class PostController extends Controller
         $this->postService->createPost(
             auth()->user(),
             $request->validated(),
-            $request->file('image'),
+            $request->file('images', []),
         );
 
         return redirect()->route('posts.index')->with('success', '投稿しました。');
@@ -76,7 +77,7 @@ class PostController extends Controller
         $this->postService->updatePost(
             $post,
             $request->validated(),
-            $request->file('image'),
+            $request->file('images', []),
         );
 
         return redirect()->route('posts.show', $post)->with('success', '投稿を更新しました。');

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use App\Models\PostImage;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +18,7 @@ class PostService
             'user',
             'product',
             'tags',
+            'postImages',
             'likes' => fn($q) => $q->where('user_id', $authUserId),
             'comments.user',
         ])
@@ -25,36 +27,47 @@ class PostService
         ->paginate($perPage);
     }
 
-    public function createPost(User $user, array $data, ?UploadedFile $image): Post
+    public function createPost(User $user, array $data, array $images): Post
     {
-        $imagePath = $image?->store('posts', 'public');
-
         $post = Post::create([
             'user_id'    => $user->id,
             'product_id' => $data['product_id'] ?? null,
             'body'       => $data['body'],
-            'image_path' => $imagePath,
         ]);
 
-        if (! empty($data['tags'])) {
-            $tagIds = collect(explode(',', $data['tags']))
-                ->map(fn($name) => trim($name))
-                ->filter()
-                ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id);
-
-            $post->tags()->sync($tagIds);
+        foreach ($images as $i => $image) {
+            PostImage::create([
+                'post_id'    => $post->id,
+                'image_path' => $image->store('posts', 'public'),
+                'sort_order' => $i,
+            ]);
         }
+
+        $tagIds = collect(explode(',', $data['tags'] ?? ''))
+            ->map(fn($name) => trim($name))
+            ->filter()
+            ->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id);
+
+        $post->tags()->sync($tagIds);
 
         return $post;
     }
 
-    public function updatePost(Post $post, array $data, ?UploadedFile $image): void
+    public function updatePost(Post $post, array $data, array $images): void
     {
-        if ($image) {
-            if ($post->image_path && ! str_starts_with($post->image_path, 'http')) {
-                Storage::disk('public')->delete($post->image_path);
+        if (! empty($images)) {
+            foreach ($post->postImages as $old) {
+                Storage::disk('public')->delete($old->image_path);
             }
-            $post->image_path = $image->store('posts', 'public');
+            $post->postImages()->delete();
+
+            foreach ($images as $i => $image) {
+                PostImage::create([
+                    'post_id'    => $post->id,
+                    'image_path' => $image->store('posts', 'public'),
+                    'sort_order' => $i,
+                ]);
+            }
         }
 
         $post->product_id = $data['product_id'] ?? null;

@@ -75,11 +75,31 @@
                 {{-- 本文 --}}
                 <p class="px-4 pt-3 pb-3 text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{{ $post->body }}</p>
 
-                {{-- 投稿画像 --}}
-                @if ($post->image_path)
-                    <img src="{{ image_url($post->image_path) }}"
-                         alt="投稿画像"
-                         class="w-full object-cover">
+                {{-- 投稿画像（複数対応） --}}
+                @php $postImgs = $post->postImages->isNotEmpty() ? $post->postImages->pluck('image_path') : ($post->image_path ? collect([$post->image_path]) : collect()); @endphp
+                @if ($postImgs->isNotEmpty())
+                    <div x-data="{ cur: 0 }" class="relative w-full bg-gray-900">
+                        <template x-for="(path, i) in {{ $postImgs->map(fn($p) => image_url($p))->toJson() }}" :key="i">
+                            <img :src="path" x-show="cur === i" class="w-full object-cover">
+                        </template>
+                        @if ($postImgs->count() > 1)
+                            <button @click="cur = (cur - 1 + {{ $postImgs->count() }}) % {{ $postImgs->count() }}"
+                                    class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button @click="cur = (cur + 1) % {{ $postImgs->count() }}"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                @for ($i = 0; $i < $postImgs->count(); $i++)
+                                    <span @click="cur = {{ $i }}"
+                                          class="w-1.5 h-1.5 rounded-full cursor-pointer transition-colors"
+                                          :class="cur === {{ $i }} ? 'bg-white' : 'bg-white/40'"></span>
+                                @endfor
+                            </div>
+                        @endif
+                    </div>
                 @endif
 
                 {{-- リンク商品カード --}}

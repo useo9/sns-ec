@@ -39,6 +39,11 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
+    public function postImages(): HasMany
+    {
+        return $this->hasMany(PostImage::class)->orderBy('sort_order');
+    }
+
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class)->latest();

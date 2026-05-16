@@ -1,7 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">投稿を作成</h2>
-    
     </x-slot>
 
     <div class="py-8">
@@ -12,38 +11,45 @@
                       x-data="postForm()" class="p-6 space-y-5">
                     @csrf
 
-                    {{-- 画像アップロード --}}
+                    {{-- 画像アップロード（最大5枚） --}}
                     <div>
-                        <x-input-label value="画像（任意・5MB以内）" />
-                        <label class="mt-1 block cursor-pointer">
-                            {{-- プレビュー表示エリア --}}
-                            <div x-show="preview"
-                                 class="relative w-full rounded-lg overflow-hidden bg-gray-900"
-                                 style="display:none">
-                                <img :src="preview" class="w-full max-h-72 object-cover">
-                                <span class="absolute inset-0 flex items-center justify-center
-                                             bg-black/50 opacity-0 hover:opacity-100 transition text-white text-sm font-medium">
-                                    画像を変更
-                                </span>
-                            </div>
+                        <div class="flex items-center justify-between mb-1">
+                            <x-input-label value="画像（任意・最大5枚・各5MB以内）" />
+                            <span class="text-xs text-gray-500" x-text="previews.length + ' / 5'"></span>
+                        </div>
 
-                            {{-- 未選択時のプレースホルダー --}}
-                            <div x-show="!preview"
-                                 class="mt-1 flex flex-col items-center justify-center gap-2
-                                        w-full h-40 border-2 border-dashed border-gray-700
-                                        rounded-lg hover:border-gray-500 transition text-gray-500">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-sm">クリックして画像を選択</span>
-                            </div>
+                        {{-- サムネイルグリッド --}}
+                        <div class="grid grid-cols-5 gap-2 mb-2" x-show="previews.length > 0">
+                            <template x-for="(src, i) in previews" :key="i">
+                                <div class="relative aspect-square rounded-lg overflow-hidden bg-gray-800">
+                                    <img :src="src" class="w-full h-full object-cover">
+                                    <button type="button" @click="removeImage(i)"
+                                            class="absolute top-0.5 right-0.5 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
 
-                            <input type="file" name="image" class="hidden"
+                        {{-- 追加ボタン（5枚未満のとき表示） --}}
+                        <label x-show="previews.length < 5"
+                               class="flex flex-col items-center justify-center gap-2 w-full h-28
+                                      border-2 border-dashed border-gray-700 rounded-lg
+                                      hover:border-gray-500 transition cursor-pointer text-gray-500">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span class="text-sm">画像を追加</span>
+                            <input type="file" name="images[]" class="hidden"
                                    accept="image/jpeg,image/png,image/webp"
+                                   multiple
                                    @change="onFileChange($event)">
                         </label>
-                        <x-input-error :messages="$errors->get('image')" class="mt-1" />
+                        <x-input-error :messages="$errors->get('images')" class="mt-1" />
+                        <x-input-error :messages="$errors->get('images.*')" class="mt-1" />
                     </div>
 
                     {{-- 本文 --}}
@@ -103,12 +109,32 @@
     <script>
         function postForm() {
             return {
-                preview: null,
+                previews: [],
+                files: [],
                 body: '{{ old('body', '') }}',
                 get bodyLength() { return this.body.length; },
                 onFileChange(e) {
-                    const file = e.target.files[0];
-                    if (file) this.preview = URL.createObjectURL(file);
+                    const selected = Array.from(e.target.files);
+                    const remaining = 5 - this.previews.length;
+                    const toAdd = selected.slice(0, remaining);
+                    toAdd.forEach(file => {
+                        this.files.push(file);
+                        this.previews.push(URL.createObjectURL(file));
+                    });
+                    e.target.value = '';
+                    this.syncFileInput();
+                },
+                removeImage(i) {
+                    this.previews.splice(i, 1);
+                    this.files.splice(i, 1);
+                    this.syncFileInput();
+                },
+                syncFileInput() {
+                    const dt = new DataTransfer();
+                    this.files.forEach(f => dt.items.add(f));
+                    document.querySelectorAll('input[name="images[]"]').forEach(input => {
+                        input.files = dt.files;
+                    });
                 },
             };
         }
