@@ -1,9 +1,14 @@
+@php
+    $commentsData = $post->comments->map(function ($c) {
+        return ['id' => $c->id, 'body' => $c->body, 'user_id' => $c->user_id, 'user_name' => $c->user->name];
+    });
+@endphp
 <article class="bg-[#111111] shadow-sm rounded-lg overflow-hidden border border-gray-800"
          x-data="{
              liked: {{ $post->isLikedBy(auth()->user()) ? 'true' : 'false' }},
              likeCount: {{ $post->likes_count }},
              showComments: false,
-             comments: @json($post->comments->map(fn($c) => ['id' => $c->id, 'body' => $c->body, 'user_id' => $c->user_id, 'user_name' => $c->user->name])),
+             comments: @json($commentsData),
              newComment: '',
              authId: {{ auth()->id() }},
              async toggleLike() {

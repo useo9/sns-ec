@@ -12,7 +12,12 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'product_id', 'body', 'image_path'];
+    protected $fillable = ['user_id', 'product_id', 'body', 'image_path', 'is_hidden'];
+
+    protected function casts(): array
+    {
+        return ['is_hidden' => 'boolean'];
+    }
 
     public function user(): BelongsTo
     {

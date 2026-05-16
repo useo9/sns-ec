@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\CommentController as AdminCommentController;
+use App\Http\Controllers\Admin\LikeController as AdminLikeController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\ShopController as AdminShopController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CommentController;
@@ -75,8 +80,40 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
+
+        // 注文
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+
+        // ユーザー
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::post('users/{user}/suspend', [AdminUserController::class, 'suspend'])->name('users.suspend');
+        Route::delete('users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        // ショップ
+        Route::get('shops', [AdminShopController::class, 'index'])->name('shops.index');
+        Route::get('shops/{shop}', [AdminShopController::class, 'show'])->name('shops.show');
+        Route::post('shops/{shop}/suspend', [AdminShopController::class, 'suspend'])->name('shops.suspend');
+        Route::delete('shops/{shop}', [AdminShopController::class, 'destroy'])->name('shops.destroy');
+
+        // 商品
+        Route::get('products', [AdminProductController::class, 'index'])->name('products.index');
+        Route::get('products/{product}', [AdminProductController::class, 'show'])->name('products.show');
+        Route::post('products/{product}/suspend', [AdminProductController::class, 'suspend'])->name('products.suspend');
+        Route::delete('products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+
+        // 投稿
+        Route::get('posts', [AdminPostController::class, 'index'])->name('posts.index');
+        Route::get('posts/{post}', [AdminPostController::class, 'show'])->name('posts.show');
+        Route::post('posts/{post}/hide', [AdminPostController::class, 'hide'])->name('posts.hide');
+        Route::delete('posts/{post}', [AdminPostController::class, 'destroy'])->name('posts.destroy');
+
+        // コメント
+        Route::get('comments', [AdminCommentController::class, 'index'])->name('comments.index');
+        Route::delete('comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
+
+        // いいね
+        Route::get('likes', [AdminLikeController::class, 'index'])->name('likes.index');
     });
 });
 
