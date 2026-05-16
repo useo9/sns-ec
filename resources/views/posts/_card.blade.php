@@ -11,6 +11,32 @@
              comments: @json($commentsData),
              newComment: '',
              authId: {{ auth()->id() }},
+             originalBody: @json($post->body),
+             translatedBody: null,
+             showTranslated: false,
+             translating: false,
+             async translate() {
+                 if (this.translatedBody) { this.showTranslated = !this.showTranslated; return; }
+                 this.translating = true;
+                 try {
+                     const res = await fetch('/translate', {
+                         method: 'POST',
+                         headers: {
+                             'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content,
+                             'Content-Type': 'application/json',
+                             'Accept': 'application/json',
+                         },
+                         body: JSON.stringify({ text: this.originalBody.substring(0, 500) })
+                     });
+                     if (res.ok) {
+                         const data = await res.json();
+                         this.translatedBody = data.translated;
+                         this.showTranslated = true;
+                     }
+                 } finally {
+                     this.translating = false;
+                 }
+             },
              async toggleLike() {
                  const method = this.liked ? 'DELETE' : 'POST';
                  const res = await fetch('/posts/{{ $post->id }}/like', {
@@ -81,7 +107,8 @@
     </div>
 
     {{-- 本文 --}}
-    <p class="px-4 pt-3 pb-2 text-gray-200 text-sm whitespace-pre-wrap">{{ $post->body }}</p>
+    <p class="px-4 pt-3 pb-2 text-gray-200 text-sm whitespace-pre-wrap"
+       x-text="showTranslated && translatedBody ? translatedBody : originalBody"></p>
 
     {{-- 投稿画像（複数対応） --}}
     @php $postImgs = $post->postImages->isNotEmpty() ? $post->postImages->pluck('image_path') : ($post->image_path ? collect([$post->image_path]) : collect()); @endphp
@@ -164,9 +191,22 @@
             <span x-text="comments.length"></span>
         </button>
 
+        {{-- 翻訳ボタン --}}
+        <button @click="translate()"
+                :disabled="translating"
+                class="ml-auto flex items-center gap-1 text-xs transition-colors disabled:opacity-50"
+                :class="showTranslated ? 'text-[#0095f6]' : 'text-gray-500 hover:text-[#0095f6]'">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+            </svg>
+            <span x-show="!translating && !showTranslated">日本語に翻訳</span>
+            <span x-show="translating" style="display:none">翻訳中...</span>
+            <span x-show="!translating && showTranslated" style="display:none">原文を表示</span>
+        </button>
+
         {{-- 詳細ページへ --}}
         <a href="{{ route('posts.show', $post) }}"
-           class="ml-auto text-xs text-gray-600 hover:text-gray-400 transition-colors">
+           class="text-xs text-gray-600 hover:text-gray-400 transition-colors">
             詳細を見る
         </a>
     </div>

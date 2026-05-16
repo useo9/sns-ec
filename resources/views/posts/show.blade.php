@@ -19,6 +19,32 @@
                  x-data="{
                      liked: {{ $post->isLikedBy(auth()->user()) ? 'true' : 'false' }},
                      likeCount: {{ $post->likes_count }},
+                     originalBody: @json($post->body),
+                     translatedBody: null,
+                     showTranslated: false,
+                     translating: false,
+                     async translate() {
+                         if (this.translatedBody) { this.showTranslated = !this.showTranslated; return; }
+                         this.translating = true;
+                         try {
+                             const res = await fetch('/translate', {
+                                 method: 'POST',
+                                 headers: {
+                                     'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content,
+                                     'Content-Type': 'application/json',
+                                     'Accept': 'application/json',
+                                 },
+                                 body: JSON.stringify({ text: this.originalBody.substring(0, 500) })
+                             });
+                             if (res.ok) {
+                                 const data = await res.json();
+                                 this.translatedBody = data.translated;
+                                 this.showTranslated = true;
+                             }
+                         } finally {
+                             this.translating = false;
+                         }
+                     },
                      async toggleLike() {
                          const method = this.liked ? 'DELETE' : 'POST';
                          const res = await fetch('/posts/{{ $post->id }}/like', {
@@ -73,7 +99,23 @@
                 </div>
 
                 {{-- 本文 --}}
-                <p class="px-4 pt-3 pb-3 text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{{ $post->body }}</p>
+                <p class="px-4 pt-3 pb-1 text-gray-200 text-sm whitespace-pre-wrap leading-relaxed"
+                   x-text="showTranslated && translatedBody ? translatedBody : originalBody"></p>
+
+                {{-- 翻訳ボタン --}}
+                <div class="px-4 pb-3">
+                    <button @click="translate()"
+                            :disabled="translating"
+                            class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-colors disabled:opacity-50"
+                            :class="showTranslated ? 'border-[#0095f6] text-[#0095f6] bg-[#0095f6]/10' : 'border-gray-700 text-gray-500 hover:border-[#0095f6] hover:text-[#0095f6]'">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                        <span x-show="!translating && !showTranslated">日本語に翻訳</span>
+                        <span x-show="translating" style="display:none">翻訳中...</span>
+                        <span x-show="!translating && showTranslated" style="display:none">原文を表示</span>
+                    </button>
+                </div>
 
                 {{-- 投稿画像（複数対応） --}}
                 @php $postImgs = $post->postImages->isNotEmpty() ? $post->postImages->pluck('image_path') : ($post->image_path ? collect([$post->image_path]) : collect()); @endphp

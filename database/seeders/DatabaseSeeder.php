@@ -13,24 +13,17 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    private const IMG_JACKET  = 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990'; // ジャケット・コート・アウター
-    private const IMG_HOODIE  = 'https://images.unsplash.com/photo-1556821840-3a63f15732ce'; // パーカー・スウェット・フリース
-    private const IMG_TEE     = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab'; // Tシャツ・シャツ・ポロ・ニット
-    private const IMG_DENIM   = 'https://images.unsplash.com/photo-1594938298603-c8148c4b4b6a'; // デニム・パンツ・ボトムス
-    private const IMG_SHOES   = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff'; // スニーカー・ブーツ・シューズ
-    private const IMG_SCARF   = 'https://images.unsplash.com/photo-1612336307429-8a898d10e223'; // スカーフ・小物・アクセサリー
-    private const IMG_OUTFIT  = 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b'; // コーデ・投稿用
-
-    private const POST_IMAGES = [self::IMG_OUTFIT, self::IMG_SCARF];
-
-    private function postImage(): string
-    {
-        return self::POST_IMAGES[array_rand(self::POST_IMAGES)];
-    }
+    private const IMG_JACKET = 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990';
+    private const IMG_HOODIE = 'https://images.unsplash.com/photo-1556821840-3a63f15732ce';
+    private const IMG_TEE    = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab';
+    private const IMG_DENIM  = 'https://images.unsplash.com/photo-1594938298603-c8148c4b4b6a';
+    private const IMG_SHOES  = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff';
+    private const IMG_SCARF  = 'https://images.unsplash.com/photo-1612336307429-8a898d10e223';
+    private const IMG_OUTFIT = 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b';
 
     public function run(): void
     {
-        // 管理者ユーザー
+        // 管理者
         User::factory()->create([
             'name'     => '管理者',
             'email'    => 'admin@example.com',
@@ -43,158 +36,50 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // ユーザー3人（パスワードはすべて "password"）
-        $users = collect([
-            User::factory()->create(['name' => '田中 花子', 'email' => 'hanako@example.com']),
-            User::factory()->create(['name' => '鈴木 太郎', 'email' => 'taro@example.com']),
-            User::factory()->create(['name' => '佐藤 美咲', 'email' => 'misaki@example.com']),
-        ]);
-
-        // タグ5つ
         $tags = collect([
             Tag::create(['name' => '古着']),
             Tag::create(['name' => 'ビンテージ']),
             Tag::create(['name' => '90s']),
             Tag::create(['name' => 'アメカジ']),
             Tag::create(['name' => 'ストリート']),
+            Tag::create(['name' => 'デザイナーズ']),
+            Tag::create(['name' => 'ワークウェア']),
         ]);
 
-        // 商品5件
-        $products = collect([
-            Product::factory()->create([
-                'user_id'     => $users->get(0)->id,
-                'title'       => 'LEVI\'S 501 デニムジャケット 90s',
-                'description' => '90年代製のリーバイスデニムジャケット。程よいヴィンテージ感が魅力です。',
-                'price'       => 8500,
-                'brand'       => 'LEVI\'S',
-                'size'        => 'M',
-                'category'    => 'アウター',
-                'condition'   => 3,
-                'image_path'  => self::IMG_JACKET,
-            ]),
-            Product::factory()->create([
-                'user_id'     => $users->get(1)->id,
-                'title'       => 'Carhartt ダック地ワークパンツ',
-                'description' => 'カーハートの定番ワークパンツ。使い込まれた味のある色落ちが特徴。',
-                'price'       => 5800,
-                'brand'       => 'Carhartt',
-                'size'        => 'L',
-                'category'    => 'ボトムス',
-                'condition'   => 4,
-                'image_path'  => self::IMG_DENIM,
-            ]),
-            Product::factory()->create([
-                'user_id'     => $users->get(2)->id,
-                'title'       => 'Champion リバースウィーブ スウェット 80s',
-                'description' => '80年代製リバースウィーブ。首元・袖のリブもしっかり残っています。',
-                'price'       => 12000,
-                'brand'       => 'Champion',
-                'size'        => 'XL',
-                'category'    => 'トップス',
-                'condition'   => 2,
-                'image_path'  => self::IMG_HOODIE,
-            ]),
-            Product::factory()->create([
-                'user_id'     => $users->get(0)->id,
-                'title'       => 'Ralph Lauren ポロシャツ 紺 L',
-                'description' => 'ラルフローレンの定番ポロ。ネイビーカラーが上品で使いやすいです。',
-                'price'       => 3200,
-                'brand'       => 'Ralph Lauren',
-                'size'        => 'L',
-                'category'    => 'トップス',
-                'condition'   => 3,
-                'image_path'  => self::IMG_TEE,
-            ]),
-            Product::factory()->create([
-                'user_id'     => $users->get(1)->id,
-                'title'       => 'Dickies ペインターパンツ ベージュ',
-                'description' => 'ディッキーズのペインターパンツ。ゆったりシルエットで今っぽい着こなしに。',
-                'price'       => 4500,
-                'brand'       => 'Dickies',
-                'size'        => 'M',
-                'category'    => 'ボトムス',
-                'condition'   => 3,
-                'image_path'  => self::IMG_DENIM,
-            ]),
-        ]);
+        // 5ヶ国のダミーユーザー（各3商品・3投稿）
+        $usersData = [
 
-        // 商品にタグを付与（各商品に1〜3つ）
-        $products->each(function (Product $product) use ($tags) {
-            $product->tags()->attach($tags->shuffle()->take(rand(1, 3))->pluck('id'));
-        });
-
-        // 投稿5件（一部に商品リンク）
-        $posts = collect([
-            Post::factory()->create([
-                'user_id'    => $users->get(0)->id,
-                'product_id' => $products->get(0)->id,
-                'body'       => '90sのリーバイスデニムジャケットを出品しました！程よいアタリが最高です。ぜひチェックしてみてください🧥',
-                'image_path' => self::IMG_OUTFIT,
-            ]),
-            Post::factory()->create([
-                'user_id'    => $users->get(2)->id,
-                'product_id' => $products->get(2)->id,
-                'body'       => '80sのチャンピオン リバースウィーブ、状態良好です。この年代のスウェットは生地の厚みが全然違います。',
-                'image_path' => self::IMG_OUTFIT,
-            ]),
-            Post::factory()->create([
-                'user_id'    => $users->get(2)->id,
-                'product_id' => null,
-                'body'       => '今日は下北沢で古着巡り。掘り出し物を見つけたときの興奮がたまらない。',
-                'image_path' => self::IMG_SCARF,
-            ]),
-            Post::factory()->create([
-                'user_id'    => $users->get(0)->id,
-                'product_id' => $products->get(4)->id,
-                'body'       => 'ディッキーズのペインターパンツ出品中です。ゆるっとした感じが今の気分にぴったり。',
-                'image_path' => self::IMG_OUTFIT,
-            ]),
-            Post::factory()->create([
-                'user_id'    => $users->get(1)->id,
-                'product_id' => null,
-                'body'       => 'アメカジコーデ。カーハートのジャケットにリーバイスの501。やっぱりこの組み合わせは最強。',
-                'image_path' => self::IMG_OUTFIT,
-            ]),
-        ]);
-
-        // 投稿にタグを付与（各投稿に1〜3つ）
-        $posts->each(function (Post $post) use ($tags) {
-            $post->tags()->attach($tags->shuffle()->take(rand(1, 3))->pluck('id'));
-        });
-
-        // 多国籍ユーザー10人分のダミーデータ
-        $this->seedInternationalUsers($tags);
-    }
-
-    private function seedInternationalUsers($tags): void
-    {
-        $internationalData = [
+            // 🇯🇵 日本人
             [
                 'user'     => ['name' => '山田 凛', 'email' => 'rin.yamada@example.com'],
                 'products' => [
-                    ['title' => 'LEVI\'S 517 フレアデニム 70s USA製', 'description' => '70年代のアメリカ製フレアデニム。ヴィンテージらしいフェードが全体に入っています。', 'price' => 14800, 'brand' => "LEVI'S", 'size' => '28', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
-                    ['title' => 'Wrangler 11MWZ ストレートデニム', 'description' => 'ラングラーの定番モデル。ウエスタンスタッチのディテールが渋い。', 'price' => 6500, 'brand' => 'Wrangler', 'size' => '30', 'category' => 'ボトムス', 'condition' => 4, 'image' => self::IMG_DENIM],
-                    ['title' => 'Lee 101-B デニムジャケット ワンウォッシュ', 'description' => 'リーのアーカイブモデル。ワンウォッシュ加工でやや落ち着いたインディゴに。', 'price' => 9200, 'brand' => 'Lee', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_JACKET],
+                    ['title' => "LEVI'S 517 フレアデニム 70s USA製", 'description' => '70年代のアメリカ製フレアデニム。全体にヴィンテージらしいフェードが入っています。', 'price' => 14800, 'brand' => "LEVI'S", 'size' => '28', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
+                    ['title' => 'Champion リバースウィーブ スウェット グレー XL', 'description' => '80年代製リバースウィーブ。首元・袖のリブもしっかり残っています。', 'price' => 12000, 'brand' => 'Champion', 'size' => 'XL', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_HOODIE],
+                    ['title' => 'Lee 101-B デニムジャケット ワンウォッシュ M', 'description' => 'リーのアーカイブモデル。ワンウォッシュ加工でやや落ち着いたインディゴに。', 'price' => 9200, 'brand' => 'Lee', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
-                    ['body' => '70sのLEVI\'S 517、ようやく出品しました。フレアシルエットが今の気分に合いすぎる。', 'link_product' => 0],
-                    ['body' => '古着屋で掘り出し物を発見。デニムは語る、とはよく言ったもの。', 'link_product' => null],
-                    ['body' => 'ヴィンテージデニム沼にどっぷりはまってます。今週だけで3本増えた…', 'link_product' => null],
+                    ['body' => "70sのLEVI'S 517、ようやく出品しました。フレアシルエットが今の気分に合いすぎる。デニムは語る。", 'product_index' => 0],
+                    ['body' => 'チャンピオンのリバースウィーブは生地の厚みが違います。着込むほど味が出てくるのがたまらない。出品中です！', 'product_index' => 1],
+                    ['body' => 'リーのデニムジャケットを出品しました。ワンウォッシュ加工でやや落ち着いたインディゴが渋い仕上がりです。', 'product_index' => 2],
                 ],
             ],
+
+            // 🇰🇷 韓国人
             [
                 'user'     => ['name' => '김지수 (Kim Jisoo)', 'email' => 'jisoo.kim@example.com'],
                 'products' => [
                     ['title' => 'Carhartt WIP OG Active Jacket ブラック M', 'description' => '카하트 WIP의 정통 액티브 재킷. 상태 양호합니다.', 'price' => 11000, 'brand' => 'Carhartt WIP', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_JACKET],
                     ['title' => 'Stüssy 8 Ball Tee ホワイト L', 'description' => '스투시 에이트볼 티셔츠. 프린트 선명, 거의 미착용 상태.', 'price' => 4800, 'brand' => 'Stüssy', 'size' => 'L', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
-                    ['title' => 'Nike ACG 90s ナイロンジャケット グレー', 'description' => '90년대 나이키 ACG 나일론 재킷. 빈티지 감성 넘침.', 'price' => 8900, 'brand' => 'Nike', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
+                    ['title' => 'Nike ACG 90s ナイロンジャケット グレー L', 'description' => '90년대 나이키 ACG 나일론 재킷. 빈티지 감성 넘칩니다.', 'price' => 8900, 'brand' => 'Nike', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
                 ],
                 'posts' => [
-                    ['body' => '오늘 카하트 재킷 업로드했어요~ 스트릿 룩에 잘 어울리는 아이템입니다.', 'link_product' => 0],
-                    ['body' => '홍대 빈티지샵 투어 다녀왔어요. 한국 빈티지 씬 요즘 너무 좋아지고 있음.', 'link_product' => null],
-                    ['body' => '스투시 x 카하트 믹스 코디. 스트릿 베이직은 역시 이 조합.', 'link_product' => 1],
+                    ['body' => '오늘 카하트 재킷 업로드했어요~ 스트릿 룩에 딱인 아이템이에요. 상태도 굉장히 좋아요!', 'product_index' => 0],
+                    ['body' => '스투시 에이트볼 티 입고 홍대 빈티지샵 투어 다녀왔어요. 프린트 선명해서 상태 진짜 대박입니다.', 'product_index' => 1],
+                    ['body' => '나이키 ACG 나일론 재킷, 90년대 빈티지 감성 폭발🔥 사이즈 L이에요. 관심 있으신 분 연락주세요!', 'product_index' => 2],
                 ],
             ],
+
+            // 🇨🇳 中国人
             [
                 'user'     => ['name' => '陈浩然 (Chen Haoran)', 'email' => 'haoran.chen@example.com'],
                 'products' => [
@@ -203,119 +88,48 @@ class DatabaseSeeder extends Seeder
                     ['title' => 'BAPE Shark Full Zip Hoodie カモ XL', 'description' => 'BAPEのシャークフーディ。カモ柄、ファスナー動作良好。', 'price' => 22000, 'brand' => 'A BATHING APE', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_HOODIE],
                 ],
                 'posts' => [
-                    ['body' => '上海的古着市场越来越有意思了！今天入手的Supreme真品，开心。', 'link_product' => 0],
-                    ['body' => 'Supreme box logo总算到手了，状态完美，有兴趣的可以联系我。', 'link_product' => 0],
-                    ['body' => 'Nuptse 1996是经典中的经典，每年冬天都想再入一件。', 'link_product' => 1],
+                    ['body' => 'Supreme Box Logo终于到手了！2019年款，全新未穿，正品保证，有意向的朋友欢迎联系我。', 'product_index' => 0],
+                    ['body' => 'Nuptse 1996是经典中的经典，每到冬天都是最保暖最百搭的选择。现在出给有缘人！', 'product_index' => 1],
+                    ['body' => 'BAPE鲨鱼卫衣迷彩款上架啦🦈 穿上街回头率极高，现在决定出清，感兴趣的来聊！', 'product_index' => 2],
                 ],
             ],
+
+            // 🇺🇸 アメリカ人
             [
                 'user'     => ['name' => 'Jake Morrison', 'email' => 'jake.morrison@example.com'],
                 'products' => [
                     ['title' => 'Pendleton Woolen Shirt XL USA Made', 'description' => 'Classic Pendleton wool shirt in great condition. Made in USA, thick and warm.', 'price' => 7200, 'brand' => 'Pendleton', 'size' => 'XL', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_TEE],
-                    ['title' => 'Filson Mackinaw Cruiser Jacket 42', 'description' => 'Heavy-duty Filson cruiser in original plaid. Some wear but super durable still.', 'price' => 19800, 'brand' => 'Filson', 'size' => 'XL', 'category' => 'アウター', 'condition' => 4, 'image' => self::IMG_JACKET],
+                    ['title' => 'Filson Mackinaw Cruiser Jacket 42', 'description' => 'Heavy-duty Filson cruiser in original plaid. Some wear but still incredibly durable.', 'price' => 19800, 'brand' => 'Filson', 'size' => 'XL', 'category' => 'アウター', 'condition' => 4, 'image' => self::IMG_JACKET],
                     ['title' => 'Red Wing 875 Moc Toe ブーツ 9D', 'description' => 'Work-worn Red Wings with great patina. Resoled once, plenty of life left.', 'price' => 13500, 'brand' => 'Red Wing', 'size' => '27cm', 'category' => 'その他', 'condition' => 4, 'image' => self::IMG_SHOES],
                 ],
                 'posts' => [
-                    ['body' => 'Just listed my Pendleton wool shirt — perfect for layering season. American workwear never goes out of style.', 'link_product' => 0],
-                    ['body' => 'Thrifted in Portland last weekend. Found some gems at the bins. US vintage scene is alive and well.', 'link_product' => null],
-                    ['body' => 'Red Wings finally up for sale. These boots have been everywhere with me. Time to pass them on.', 'link_product' => 2],
+                    ['body' => 'Just listed my Pendleton wool shirt — classic American workwear that never goes out of style. Built to last forever.', 'product_index' => 0],
+                    ['body' => 'Filson cruiser jacket up for sale. Built like a tank, been with me through rain and snow for years.', 'product_index' => 1],
+                    ['body' => "Red Wings finally up for grabs. These boots have taken me everywhere. Time to pass them on to someone who'll love them. 🥾", 'product_index' => 2],
                 ],
             ],
-            [
-                'user'     => ['name' => '박민준 (Park Minjun)', 'email' => 'minjun.park@example.com'],
-                'products' => [
-                    ['title' => 'Polo Ralph Lauren ニットセーター クルーネック M', 'description' => '폴로 랄프로렌 니트. 보풀 없이 깨끗한 상태입니다.', 'price' => 5500, 'brand' => 'Ralph Lauren', 'size' => 'M', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
-                    ['title' => 'Tommy Hilfiger フラッグロゴ コーチジャケット L', 'description' => '90s 타미힐피거 코치 재킷. 로고 자수 선명, 세탁 완료.', 'price' => 7800, 'brand' => 'Tommy Hilfiger', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
-                    ['title' => 'Nautica セーリングジャケット ネイビー XL', 'description' => '90s 노티카 세일링 재킷. 바람막이 기능 살아있고 상태 굿.', 'price' => 9600, 'brand' => 'Nautica', 'size' => 'XL', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
-                ],
-                'posts' => [
-                    ['body' => '90s 아메카지 감성 너무 좋아... 타미힐피거랑 노티카 조합은 진리.', 'link_product' => 1],
-                    ['body' => '이번 주 빈티지 하울! 폴로 니트를 겨우 건졌습니다. 상태 대박.', 'link_product' => 0],
-                    ['body' => '빈티지 아메카지는 역시 봄이 제철. 코치 재킷 시즌 시작이에요.', 'link_product' => null],
-                ],
-            ],
-            [
-                'user'     => ['name' => '渡辺 颯太', 'email' => 'sota.watanabe@example.com'],
-                'products' => [
-                    ['title' => 'COMME des GARÇONS SHIRT ストライプシャツ S', 'description' => 'コムデギャルソンシャツのアーカイブ。ストライプ柄、状態良好です。', 'price' => 18000, 'brand' => 'COMME des GARÇONS', 'size' => 'S', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
-                    ['title' => 'Yohji Yamamoto ウールスラックス ブラック M', 'description' => 'ヨウジヤマモトのスラックス。上質なウール素材、シルエットが美しい。', 'price' => 24000, 'brand' => 'Yohji Yamamoto', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
-                    ['title' => 'Issey Miyake PLEATS PLEASE プリーツパンツ グレー', 'description' => 'イッセイミヤケのプリーツプリーズ。シワになりにくく扱いやすいです。', 'price' => 15000, 'brand' => 'Issey Miyake', 'size' => '3', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
-                ],
-                'posts' => [
-                    ['body' => '日本のデザイナーズブランドを少しずつ集めています。ヨウジのスラックスはマストハブ。', 'link_product' => 1],
-                    ['body' => 'コムデギャルソンのシャツを出品しました。アーカイブ好きにぜひ。', 'link_product' => 0],
-                    ['body' => 'プリーツプリーズは本当に機能的でよくできてる。旅行にも重宝します。', 'link_product' => 2],
-                ],
-            ],
+
+            // 🇮🇹 イタリア人
             [
                 'user'     => ['name' => 'Sofia Marchetti', 'email' => 'sofia.marchetti@example.com'],
                 'products' => [
-                    ['title' => 'Levi\'s 501 高腰デニム ショーツ W26', 'description' => 'Pantaloncini di jeans Levi\'s 501 vintage tagliati a mano. Perfetti per l\'estate.', 'price' => 4200, 'brand' => "Levi's", 'size' => 'W26', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
-                    ['title' => 'Versace ヴィンテージ シルクスカーフ', 'description' => 'Foulard di seta Versace vintage. Stampa barocca, colori vivaci e intatti.', 'price' => 12000, 'brand' => 'Versace', 'size' => 'FREE', 'category' => 'その他', 'condition' => 2, 'image' => self::IMG_SCARF],
-                    ['title' => 'Moschino 90s ロゴプリント Tシャツ', 'description' => 'T-shirt Moschino anni \'90 con logo. Pezzi così non se ne trovano più.', 'price' => 8800, 'brand' => 'Moschino', 'size' => 'S', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_TEE],
+                    ['title' => "Levi's 501 高腰デニム ショーツ W26", 'description' => "Pantaloncini di jeans Levi's 501 vintage tagliati a mano. Perfetti per l'estate.", 'price' => 4200, 'brand' => "Levi's", 'size' => 'W26', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
+                    ['title' => 'Versace ヴィンテージ シルクスカーフ FREE', 'description' => 'Foulard di seta Versace vintage. Stampa barocca, colori vivaci e intatti.', 'price' => 12000, 'brand' => 'Versace', 'size' => 'FREE', 'category' => 'その他', 'condition' => 2, 'image' => self::IMG_SCARF],
+                    ['title' => 'Moschino 90s ロゴプリント Tシャツ S', 'description' => "T-shirt Moschino anni '90 con logo originale. Pezzi così non se ne trovano più.", 'price' => 8800, 'brand' => 'Moschino', 'size' => 'S', 'category' => 'トップス', 'condition' => 3, 'image' => self::IMG_TEE],
                 ],
                 'posts' => [
-                    ['body' => 'Ho trovato questi Levi\'s 501 tagliati a un mercatino. Pronti per l\'estate! 🌞', 'link_product' => 0],
-                    ['body' => 'Il vintage italiano è unico. Oggi ho aggiunto un foulard Versace alla mia collezione.', 'link_product' => 1],
-                    ['body' => 'La moda vintage non muore mai — cambia solo forma. 💫 Moschino 90s forever.', 'link_product' => 2],
-                ],
-            ],
-            [
-                'user'     => ['name' => '中村 葵', 'email' => 'aoi.nakamura@example.com'],
-                'products' => [
-                    ['title' => 'Patagonia レトロX フリースジャケット M ブラック', 'description' => 'パタゴニアのレトロXフリース。ボア状の内側がふかふかで暖かい。', 'price' => 16000, 'brand' => 'Patagonia', 'size' => 'M', 'category' => 'アウター', 'condition' => 2, 'image' => self::IMG_HOODIE],
-                    ['title' => 'L.L.Bean ハンティング モックネック フリース', 'description' => 'エルエルビーンのアウトドアフリース。肉厚でアウターとしても使えます。', 'price' => 5800, 'brand' => 'L.L.Bean', 'size' => 'L', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_HOODIE],
-                    ['title' => 'Columbia ウィンドブレーカー ネイビー×レッド S', 'description' => 'コロンビアの90sウィンドブレーカー。色の組み合わせが最高にかわいい。', 'price' => 4900, 'brand' => 'Columbia', 'size' => 'S', 'category' => 'アウター', 'condition' => 3, 'image' => self::IMG_JACKET],
-                ],
-                'posts' => [
-                    ['body' => 'アウトドア系古着が最近マイブーム。パタゴニアのレトロXはやっぱり名作。', 'link_product' => 0],
-                    ['body' => '山にも街にも似合うフリース。L.L.Beanのこのモックネックが特にお気に入り。', 'link_product' => 1],
-                    ['body' => 'コロンビアのウィンドブレーカー出品しました！カラーブロック好きな方にどうぞ。', 'link_product' => 2],
-                ],
-            ],
-            [
-                'user'     => ['name' => 'Léa Dubois', 'email' => 'lea.dubois@example.com'],
-                'products' => [
-                    ['title' => 'A.P.C. セーラーボーダー カットソー S', 'description' => 'T-shirt marinière A.P.C. en coton, rayures bleues et blanches. État impeccable.', 'price' => 7500, 'brand' => 'A.P.C.', 'size' => 'S', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
-                    ['title' => 'Isabel Marant エトワール リネンシャツ ホワイト 36', 'description' => 'Chemise en lin Isabel Marant Étoile. Légère et respirante, parfaite pour l\'été.', 'price' => 13000, 'brand' => 'Isabel Marant', 'size' => '36', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_TEE],
-                    ['title' => 'Sandro パリ テーパードトラウザー クリーム M', 'description' => 'Pantalon Sandro Paris en tissu crème. Coupe élégante, jambes fuselées.', 'price' => 10800, 'brand' => 'Sandro', 'size' => 'M', 'category' => 'ボトムス', 'condition' => 2, 'image' => self::IMG_DENIM],
-                ],
-                'posts' => [
-                    ['body' => 'Le style vintage parisien c\'est avant tout : une marinière, un jean et des escarpins. Simple et efficace. 🥐', 'link_product' => 0],
-                    ['body' => 'J\'ai enfin trouvé la chemise en lin parfaite pour cet été. Isabel Marant ne déçoit jamais.', 'link_product' => 1],
-                    ['body' => 'Un beau pantalon crème pour l\'été — Sandro fait vraiment du bon travail sur les coupes. 🌿', 'link_product' => 2],
-                ],
-            ],
-            [
-                'user'     => ['name' => 'Marco Oliveira', 'email' => 'marco.oliveira@example.com'],
-                'products' => [
-                    ['title' => 'Dickies 874 ワークパンツ カーキ 32×30', 'description' => 'Calça de trabalho Dickies 874 em ótimo estado. Cor cáqui clássica.', 'price' => 5200, 'brand' => 'Dickies', 'size' => 'W32', 'category' => 'ボトムス', 'condition' => 3, 'image' => self::IMG_DENIM],
-                    ['title' => 'Champion リバースウィーブ クルーネック スウェット グレー L', 'description' => 'Moletom Champion reverse weave, cinza, em excelente estado. Muito confortável.', 'price' => 8400, 'brand' => 'Champion', 'size' => 'L', 'category' => 'トップス', 'condition' => 2, 'image' => self::IMG_HOODIE],
-                    ['title' => 'Vans Old Skool ブラック×ホワイト 27.5cm', 'description' => 'Tênis Vans Old Skool preto e branco, usado poucas vezes. Solado em bom estado.', 'price' => 6800, 'brand' => 'Vans', 'size' => '27.5cm', 'category' => 'その他', 'condition' => 3, 'image' => self::IMG_SHOES],
-                ],
-                'posts' => [
-                    ['body' => 'O streetwear clássico nunca sai de moda. Dickies + Champion é minha fórmula favorita. 🛹', 'link_product' => 0],
-                    ['body' => 'Finalmente postei o moletom Champion que estava guardado. Reverse weave é intemporal!', 'link_product' => 1],
-                    ['body' => 'Vans Old Skool à venda — essas foram minhas companheiras por muito tempo. 🤙', 'link_product' => 2],
+                    ['body' => "Ho trovato questi Levi's 501 tagliati a un mercatino vintage. Perfetti per l'estate, ora li metto in vendita!", 'product_index' => 0],
+                    ['body' => 'Foulard Versace vintage in seta pura — colori vivaci e stampa barocca intatta. Un pezzo unico da collezione. 🌸', 'product_index' => 1],
+                    ['body' => "T-shirt Moschino anni '90 con logo originale. Pezzi così non si trovano più facilmente, approfittate! 💫", 'product_index' => 2],
                 ],
             ],
         ];
 
-        // 追加タグ
-        $extraTags = collect([
-            Tag::firstOrCreate(['name' => 'デザイナーズ']),
-            Tag::firstOrCreate(['name' => 'アウトドア']),
-            Tag::firstOrCreate(['name' => 'ストリート']),
-            Tag::firstOrCreate(['name' => 'ワークウェア']),
-            Tag::firstOrCreate(['name' => 'スケート']),
-        ]);
-        $allTags = $tags->concat($extraTags)->unique('id')->values();
-
-        foreach ($internationalData as $data) {
-            $user = User::factory()->create($data['user']);
+        foreach ($usersData as $userData) {
+            $user = User::factory()->create($userData['user']);
 
             $userProducts = collect();
-            foreach ($data['products'] as $productData) {
+            foreach ($userData['products'] as $productData) {
                 $image = $productData['image'];
                 unset($productData['image']);
                 $product = Product::factory()->create(array_merge($productData, [
@@ -323,22 +137,19 @@ class DatabaseSeeder extends Seeder
                     'status'     => 1,
                     'image_path' => $image,
                 ]));
-                $product->tags()->attach($allTags->shuffle()->take(rand(1, 3))->pluck('id'));
+                $product->tags()->attach($tags->shuffle()->take(rand(1, 3))->pluck('id'));
                 $userProducts->push($product);
             }
 
-            foreach ($data['posts'] as $postData) {
-                $linkedProduct = null;
-                if (isset($postData['link_product']) && $postData['link_product'] !== null) {
-                    $linkedProduct = $userProducts->get($postData['link_product']);
-                }
+            foreach ($userData['posts'] as $postData) {
+                $product = $userProducts->get($postData['product_index']);
                 $post = Post::factory()->create([
                     'user_id'    => $user->id,
-                    'product_id' => $linkedProduct?->id,
+                    'product_id' => $product->id,
                     'body'       => $postData['body'],
-                    'image_path' => $this->postImage(),
+                    'image_path' => self::IMG_OUTFIT,
                 ]);
-                $post->tags()->attach($allTags->shuffle()->take(rand(1, 2))->pluck('id'));
+                $post->tags()->attach($tags->shuffle()->take(rand(1, 2))->pluck('id'));
             }
         }
     }
